@@ -11,6 +11,7 @@ class Product(models.Model):
         ('kg', 'Kg'),
         ('gram', 'Gram'),
     ]
+    
 
     product_name = models.CharField(max_length=200)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
@@ -22,6 +23,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    description = models.TextField(blank=True)
 
     class Meta:
         db_table = 'products'
@@ -31,8 +33,8 @@ class Product(models.Model):
         return self.product_name
 
     @property
-    def is_in_stock(self):
-        return self.product_count > 0
+    def is_out_of_stock(self):
+        return self.product_count <= 0
 
 
 class StockHistory(models.Model):
