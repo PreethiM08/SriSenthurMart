@@ -33,7 +33,7 @@ export default function AdminLogin() {
             <div className="auth-left admin-auth-left">
                 <div className="auth-brand">
                     <span className="auth-brand-icon">🌿</span>
-                    <h1>NatureMart</h1>
+                    <h1>SriSenthurMart</h1>
                     <p>Admin Control Panel</p>
                 </div>
                 <div className="auth-features">

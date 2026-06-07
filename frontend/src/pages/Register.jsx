@@ -56,7 +56,7 @@ export default function Register() {
             <div className="auth-left">
                 <div className="auth-brand">
                     <span className="auth-brand-icon">🌿</span>
-                    <h1>NatureMart</h1>
+                    <h1>SriSenthurMart</h1>
                     <p>Pure oils & natural powder mixes, delivered fresh to your door.</p>
                 </div>
                 <div className="auth-features">

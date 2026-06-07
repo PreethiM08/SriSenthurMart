@@ -27,7 +27,7 @@ export default function OrderSuccess() {
                     <div className="success-header">
                         <div className="success-icon-big">✓</div>
                         <h1>Order Placed Successfully!</h1>
-                        <p>Thank you for shopping with NatureMart. Your order is confirmed.</p>
+                        <p>Thank you for shopping with SriSenthurMart. Your order is confirmed.</p>
                     </div>
 
                     {/* Transaction Receipt */}

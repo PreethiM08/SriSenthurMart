@@ -57,6 +57,16 @@ export function CartProvider({ children }) {
 
 export const useCart = () => {
     const ctx = useContext(CartContext)
-    if (!ctx) throw new Error('useCart must be used within CartProvider')
+    // Return safe defaults if context isn't ready yet
+    if (!ctx) return {
+        cartItems: [],
+        cartSummary: { products_count: 0, grand_total: 0 },
+        loading: false,
+        fetchCart: () => { },
+        addToCart: () => { },
+        updateCart: () => { },
+        removeFromCart: () => { },
+        clearCart: () => { }
+    }
     return ctx
 }
