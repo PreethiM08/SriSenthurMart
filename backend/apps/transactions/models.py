@@ -1,5 +1,5 @@
 from django.db import models
-from apps.accounts.models import User
+from apps.users.models import User
 from apps.orders.models import Order
 
 

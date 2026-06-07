@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.hashers import make_password
-from apps.accounts.models import User
+from apps.users.models import User
 from apps.products.models import Product
 
 

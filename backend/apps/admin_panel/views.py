@@ -6,7 +6,7 @@ from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import timedelta
 
-from apps.accounts.models import User
+from apps.users.models import User
 from apps.products.models import Product
 from apps.orders.models import Order, OrderItem
 from apps.transactions.models import Transaction
@@ -90,7 +90,7 @@ class UsersListView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        from apps.accounts.serializers import UserSerializer
+        from apps.users.serializers import UserSerializer
         users = User.objects.filter(is_staff=False).order_by('-created_at')
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
