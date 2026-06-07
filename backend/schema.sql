@@ -1,9 +1,9 @@
 -- ============================================
--- NatureMart E-Commerce — MySQL Schema
+-- SriSenthurMart E-Commerce — MySQL Schema
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS ecommerce_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE ecommerce_db;
+CREATE DATABASE IF NOT EXISTS srisenthurmart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE srisenthurmart_db;
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (

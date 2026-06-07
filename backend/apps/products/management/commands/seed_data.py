@@ -12,7 +12,7 @@ class Command(BaseCommand):
         if not User.objects.filter(username='admin').exists():
             User.objects.create(
                 username='admin',
-                email='admin@naturemart.com',
+                email='admin@srisenthurmart.com',
                 full_name='Admin User',
                 phone_number='9876543210',
                 password=make_password('Admin@1234'),
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         if not User.objects.filter(username='testuser').exists():
             User.objects.create(
                 username='testuser',
-                email='test@naturemart.com',
+                email='test@srisenthurmart.com',
                 full_name='Test User',
                 phone_number='9876543211',
                 password=make_password('Test@1234'),
@@ -36,20 +36,20 @@ class Command(BaseCommand):
 
         # Oil products
         oil_products = [
-            {'product_name': 'Groundnut Oil', 'price': 250.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'stock': 100, 'product_count': 1},
-            {'product_name': 'Sesame Oil', 'price': 380.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 75, 'product_count': 1},
-            {'product_name': 'Coconut Oil', 'price': 320.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'stock': 60, 'product_count': 1},
-            {'product_name': 'Mustard Oil', 'price': 210.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'stock': 90, 'product_count': 1},
-            {'product_name': 'Castor Oil', 'price': 180.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 5, 'product_count': 1},
+            {'product_name': 'Groundnut Oil', 'price': 250.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'product_count': 100},
+            {'product_name': 'Sesame Oil', 'price': 380.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'product_count': 75},
+            {'product_name': 'Coconut Oil', 'price': 320.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'product_count': 60},
+            {'product_name': 'Mustard Oil', 'price': 210.00, 'quantity_value': 1.0, 'quantity_unit': 'liter', 'product_count': 90},
+            {'product_name': 'Castor Oil', 'price': 180.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'product_count': 5},
         ]
 
         # Powder products
         powder_products = [
-            {'product_name': 'Idli Mix', 'price': 150.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 80, 'product_count': 1},
-            {'product_name': 'Dosa Mix', 'price': 130.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 70, 'product_count': 1},
-            {'product_name': 'Health Mix', 'price': 220.00, 'quantity_value': 1.0, 'quantity_unit': 'kg', 'stock': 0, 'product_count': 1},
-            {'product_name': 'Ragi Flour', 'price': 95.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 120, 'product_count': 1},
-            {'product_name': 'Wheat Rava Mix', 'price': 110.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'stock': 55, 'product_count': 1},
+            {'product_name': 'Idli Mix', 'price': 150.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'product_count': 80},
+            {'product_name': 'Dosa Mix', 'price': 130.00, 'quantity_value': 500, 'quantity_unit': 'gram',  'product_count': 70},
+            {'product_name': 'Health Mix', 'price': 220.00, 'quantity_value': 1.0, 'quantity_unit': 'kg', 'product_count': 0},
+            {'product_name': 'Ragi Flour', 'price': 95.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'product_count': 120},
+            {'product_name': 'Wheat Rava Mix', 'price': 110.00, 'quantity_value': 500, 'quantity_unit': 'gram', 'product_count': 55},
         ]
 
         created = 0
@@ -64,6 +64,6 @@ class Command(BaseCommand):
                 created += 1
 
         self.stdout.write(self.style.SUCCESS(f'✓ {created} products seeded successfully'))
-        self.stdout.write(self.style.SUCCESS('\n🌿 NatureMart seed complete!'))
+        self.stdout.write(self.style.SUCCESS('\n SriSenthurMart seed complete!'))
         self.stdout.write('  Admin login → admin / Admin@1234')
         self.stdout.write('  User login  → testuser / Test@1234')
