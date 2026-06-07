@@ -1,25 +1,26 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from django.db.models import Sum, Count, F
-from django.db.models.functions import TruncMonth, TruncDay
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import timedelta
 
-from apps.users.models import User
+from apps.accounts.models import User
 from apps.products.models import Product
 from apps.orders.models import Order, OrderItem
 from apps.transactions.models import Transaction
 
 
-class DashboardSummaryView(APIView):
-    permission_classes = [IsAdminUser]
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
         total_users = User.objects.filter(is_staff=False).count()
-        total_products = Product.objects.count()
+        total_products = Product.objects.filter(is_active=True).count()
         total_orders = Order.objects.count()
-        total_transactions = Transaction.objects.count()
+        total_transactions = Transaction.objects.filter(payment_status='success').count()
+
         total_revenue = Transaction.objects.filter(
             payment_status='success'
         ).aggregate(total=Sum('amount'))['total'] or 0
@@ -28,6 +29,46 @@ class DashboardSummaryView(APIView):
             total=Sum('quantity')
         )['total'] or 0
 
+        low_stock_products = Product.objects.filter(
+            is_active=True, stock__gt=0, stock__lte=10
+        ).values('id', 'product_name', 'stock')[:10]
+
+        out_of_stock_products = Product.objects.filter(
+            is_active=True, stock=0
+        ).values('id', 'product_name', 'stock')[:10]
+
+        low_stock_all = list(low_stock_products) + list(out_of_stock_products)
+
+        # Top products by sales
+        top_products = OrderItem.objects.values(
+            'product_name'
+        ).annotate(
+            total_sold=Sum('quantity'),
+            total_revenue=Sum('unit_price')
+        ).order_by('-total_sold')[:5]
+
+        # Monthly revenue (last 6 months)
+        six_months_ago = timezone.now() - timedelta(days=180)
+        monthly_sales = Transaction.objects.filter(
+            payment_status='success',
+            payment_date__gte=six_months_ago
+        ).annotate(
+            month=TruncMonth('payment_date')
+        ).values('month').annotate(
+            revenue=Sum('amount')
+        ).order_by('month')
+
+        monthly_data = [
+            {
+                'month': entry['month'].strftime('%b %Y'),
+                'revenue': float(entry['revenue'])
+            }
+            for entry in monthly_sales
+        ]
+
+        oil_count = Product.objects.filter(category='oil', is_active=True).count()
+        powder_count = Product.objects.filter(category='powder', is_active=True).count()
+
         return Response({
             'total_users': total_users,
             'total_products': total_products,
@@ -35,80 +76,69 @@ class DashboardSummaryView(APIView):
             'total_transactions': total_transactions,
             'total_revenue': float(total_revenue),
             'products_sold': products_sold,
+            'low_stock_count': Product.objects.filter(is_active=True, stock__gt=0, stock__lte=10).count(),
+            'out_of_stock_count': Product.objects.filter(is_active=True, stock=0).count(),
+            'low_stock_products': low_stock_all,
+            'top_products': list(top_products),
+            'monthly_sales': monthly_data,
+            'oil_products_count': oil_count,
+            'powder_products_count': powder_count,
         })
 
 
-class SalesOverviewView(APIView):
-    """Monthly sales data for chart (last 6 months)."""
-    permission_classes = [IsAdminUser]
+class UsersListView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        six_months_ago = timezone.now() - timedelta(days=180)
-        data = (
-            Transaction.objects
-            .filter(payment_date__gte=six_months_ago, payment_status='success')
-            .annotate(month=TruncMonth('payment_date'))
-            .values('month')
-            .annotate(revenue=Sum('amount'), orders=Count('id'))
-            .order_by('month')
-        )
-        return Response([
-            {
-                'month': item['month'].strftime('%b %Y'),
-                'revenue': float(item['revenue']),
-                'orders': item['orders'],
-            }
-            for item in data
-        ])
-
-
-class ProductSalesSummaryView(APIView):
-    """Top 10 products by quantity sold."""
-    permission_classes = [IsAdminUser]
-
-    def get(self, request):
-        data = (
-            OrderItem.objects
-            .values('product_name')
-            .annotate(total_sold=Sum('quantity'), revenue=Sum(F('quantity') * F('unit_price')))
-            .order_by('-total_sold')[:10]
-        )
-        return Response(list(data))
-
-
-class LowStockView(APIView):
-    """Products with stock <= 10."""
-    permission_classes = [IsAdminUser]
-
-    def get(self, request):
-        from apps.products.serializers import ProductSerializer
-        low_stock = Product.objects.filter(product_count__lte=10, is_active=True).order_by('product_count')
-        from apps.products.serializers import ProductSerializer
-        serializer = ProductSerializer(low_stock, many=True, context={'request': request})
+        from apps.accounts.serializers import UserSerializer
+        users = User.objects.filter(is_staff=False).order_by('-created_at')
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
 
-class RevenueAnalyticsView(APIView):
-    permission_classes = [IsAdminUser]
+class SalesAnalyticsView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        top_product = (
-            OrderItem.objects
-            .values('product_name')
-            .annotate(total_sold=Sum('quantity'))
-            .order_by('-total_sold')
-            .first()
+        period = request.query_params.get('period', 'monthly')
+        now = timezone.now()
+
+        if period == 'daily':
+            start = now - timedelta(days=30)
+        elif period == 'weekly':
+            start = now - timedelta(weeks=12)
+        else:
+            start = now - timedelta(days=365)
+
+        transactions = Transaction.objects.filter(
+            payment_status='success',
+            payment_date__gte=start
+        ).annotate(
+            month=TruncMonth('payment_date')
+        ).values('month').annotate(
+            count=Count('id'),
+            revenue=Sum('amount')
+        ).order_by('month')
+
+        return Response(list(transactions))
+
+
+class RevenueAnalyticsView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        total = Transaction.objects.filter(payment_status='success').aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+
+        by_category = OrderItem.objects.select_related('product').values(
+            'product__category'
+        ).annotate(
+            total_sold=Sum('quantity'),
+            revenue=Sum('unit_price')
         )
-        out_of_stock = Product.objects.filter(product_count=0).count()
-        low_stock = Product.objects.filter(product_count__gt=0, product_count__lte=10).count()
-        total_revenue = Transaction.objects.filter(
-            payment_status='success'
-        ).aggregate(total=Sum('amount'))['total'] or 0
 
         return Response({
-            'total_revenue': float(total_revenue),
-            'top_selling_product': top_product,
-            'out_of_stock_count': out_of_stock,
-            'low_stock_count': low_stock,
-            'total_products_sold': OrderItem.objects.aggregate(t=Sum('quantity'))['t'] or 0,
+            'total_revenue': float(total),
+            'by_category': list(by_category)
         })

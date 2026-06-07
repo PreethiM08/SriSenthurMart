@@ -1,13 +1,9 @@
 from django.urls import path
-from .views import (
-    DashboardSummaryView, SalesOverviewView,
-    ProductSalesSummaryView, LowStockView, RevenueAnalyticsView
-)
+from .views import DashboardView, UsersListView, SalesAnalyticsView, RevenueAnalyticsView
 
 urlpatterns = [
-    path('dashboard/', DashboardSummaryView.as_view(), name='dashboard-summary'),
-    path('sales-overview/', SalesOverviewView.as_view(), name='sales-overview'),
-    path('product-sales/', ProductSalesSummaryView.as_view(), name='product-sales-summary'),
-    path('low-stock/', LowStockView.as_view(), name='low-stock'),
-    path('revenue/', RevenueAnalyticsView.as_view(), name='revenue-analytics'),
+    path('dashboard/', DashboardView.as_view(), name='admin_dashboard'),
+    path('users/', UsersListView.as_view(), name='admin_users'),
+    path('sales/', SalesAnalyticsView.as_view(), name='admin_sales'),
+    path('revenue/', RevenueAnalyticsView.as_view(), name='admin_revenue'),
 ]
