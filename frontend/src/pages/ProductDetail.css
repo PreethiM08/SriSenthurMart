@@ -1,0 +1,188 @@
+.pd-container {
+    padding: 32px 24px 60px;
+}
+
+.back-btn {
+    margin-bottom: 24px;
+}
+
+.pd-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+}
+
+.pd-img-wrap {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-muted);
+    aspect-ratio: 1;
+}
+
+.pd-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pd-img-wrap .product-category-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.product-category-badge.oil {
+    background: rgba(212, 160, 23, 0.9);
+    color: #fff;
+}
+
+.product-category-badge.powder {
+    background: rgba(45, 106, 79, 0.9);
+    color: #fff;
+}
+
+.pd-name {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.pd-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+}
+
+.pd-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pd-meta-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.pd-meta-val {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.pd-price {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 24px;
+}
+
+.pd-qty-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.qty-btn {
+    width: 38px;
+    height: 38px;
+    background: var(--bg-muted);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.qty-btn:hover {
+    background: var(--border);
+}
+
+.qty-val {
+    width: 48px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.pd-subtotal {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.pd-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.pd-actions .btn {
+    flex: 1;
+}
+
+.pd-benefits {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.pd-benefit {
+    padding: 6px 12px;
+    background: var(--success-light);
+    color: var(--success);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .pd-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .pd-name {
+        font-size: 24px;
+    }
+
+    .pd-price {
+        font-size: 30px;
+    }
+
+    .pd-actions {
+        flex-direction: column;
+    }
+}
