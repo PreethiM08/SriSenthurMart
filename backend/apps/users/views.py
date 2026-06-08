@@ -29,24 +29,58 @@ class RegisterView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
+class AdminLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            return Response({'error': 'Invalid credentials'}, status=401)
+
+        if not user.is_staff:
+            return Response({'error': 'Not admin user'}, status=403)
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'admin': UserSerializer(user).data,
+            'tokens': {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+        })
+        
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = authenticate(
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
-        )
-        if not user:
-            return Response({'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is None:
+            return Response(
+                {'error': 'Invalid username or password'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
         if not user.is_active:
-            return Response({'error': 'Account is disabled.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {'error': 'Account disabled'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         refresh = RefreshToken.for_user(user)
+
         return Response({
-            'message': 'Login successful.',
             'user': UserSerializer(user).data,
             'tokens': {
                 'refresh': str(refresh),

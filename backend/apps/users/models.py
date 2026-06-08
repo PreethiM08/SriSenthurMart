@@ -41,12 +41,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class AdminUser(models.Model):
-    """Separate admin table as per spec."""
-    username = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
         db_table = 'admins'
 
