@@ -16,7 +16,10 @@ export function CartProvider({ children }) {
         try {
             const { data } = await cartAPI.get()
             setCartItems(data.items)
-            setCartSummary(data.summary)
+            setCartSummary({
+                products_count: data.products_count || 0,
+                grand_total: data.total_amount || 0
+            })
         } catch { /* ignore */ }
         finally { setLoading(false) }
     }, [user, isAdmin])

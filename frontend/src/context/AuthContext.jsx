@@ -31,13 +31,20 @@ export function AuthProvider({ children }) {
     }, [])
 
     const adminLogin = useCallback(async (credentials) => {
-        const { data } = await authAPI.adminLogin(credentials)
+        const { data } = await authAPI.login(credentials)
+
+        if (!data.user.is_staff) {
+            throw new Error("Not an admin user")
+        }
+
         localStorage.setItem('access_token', data.tokens.access)
         localStorage.setItem('refresh_token', data.tokens.refresh)
-        localStorage.setItem('user', JSON.stringify(data.admin))
+        localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('is_admin', 'true')
-        setUser(data.admin)
+
+        setUser(data.user)
         setIsAdmin(true)
+
         return data
     }, [])
 

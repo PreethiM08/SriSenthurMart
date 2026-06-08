@@ -27,7 +27,7 @@ export default function Navbar() {
                 <div className="container navbar-inner">
                     <Link to="/admin/dashboard" className="navbar-brand">
                         <span className="brand-icon">🌿</span>
-                        <span>NatureMart <em>Admin</em></span>
+                        <span>SriSenthurMart <em>Admin</em></span>
                     </Link>
                     <div className="admin-nav-links">
                         <Link to="/admin/dashboard" className={isActive('/admin/dashboard') ? 'active' : ''}>Dashboard</Link>
@@ -47,7 +47,7 @@ export default function Navbar() {
             <div className="container navbar-inner">
                 <Link to="/" className="navbar-brand">
                     <span className="brand-icon">🌿</span>
-                    <span>NatureMart</span>
+                    <span>SriSenthurMart</span>
                 </Link>
 
                 <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
