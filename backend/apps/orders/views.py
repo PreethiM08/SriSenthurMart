@@ -91,6 +91,7 @@ class AdminOrderListView(generics.ListAPIView):
     queryset = Order.objects.all().prefetch_related('items').select_related('user')
     serializer_class = OrderSerializer
     permission_classes = [IsAdminUser]
+    pagination_class = None
     filterset_fields = ['status']
 
 
@@ -98,6 +99,21 @@ class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAdminUser]
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        new_status = request.data.get("status")
+        
+        if new_status not in dict(Order.STATUS_CHOICES):
+            return Response(
+                {"error": "Invalid status"},
+                status=400
+                )
+        instance.status = new_status
+        instance.save()
+        return Response(
+            OrderSerializer(instance).data
+            )
 
     def partial_update(self, request, *args, **kwargs):
         # Only allow status updates from admin
@@ -108,3 +124,5 @@ class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
         instance.status = new_status
         instance.save()
         return Response(OrderSerializer(instance).data)
+
+    

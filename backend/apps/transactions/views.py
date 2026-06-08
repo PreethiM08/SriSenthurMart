@@ -55,6 +55,7 @@ class UserTransactionListView(generics.ListAPIView):
 class AdminTransactionListView(generics.ListAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+    pagination_class = None
 
     def get_queryset(self):
         qs = Transaction.objects.all().select_related('user', 'order')

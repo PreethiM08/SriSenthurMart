@@ -121,8 +121,8 @@ export default function AdminDashboard() {
                                             <tr key={i}>
                                                 <td>{p.product_name}</td>
                                                 <td>
-                                                    <span className={`badge ${p.stock === 0 ? 'badge-danger' : 'badge-warning'}`}>
-                                                        {p.stock === 0 ? 'Out of Stock' : `${p.stock} left`}
+                                                    <span className={`badge ${p.product_count === 0 ? 'badge-danger' : 'badge-warning'}`}>
+                                                        {p.product_count === 0 ? 'Out of Stock' : `${p.product_count} left`}
                                                     </span>
                                                 </td>
                                             </tr>

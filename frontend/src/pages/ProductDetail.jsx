@@ -41,7 +41,8 @@ export default function ProductDetail() {
     if (loading) return <div className="page-loader"><div className="spinner" /></div>
     if (!product) return null
 
-    const isOutOfStock = product.stock === 0
+    const stock = Number(product.product_count || 0)
+    const isOutOfStock = stock <= 0
 
     return (
         <div className="page-wrapper">
@@ -77,12 +78,14 @@ export default function ProductDetail() {
                             <div className="pd-meta-item">
                                 <span className="pd-meta-label">Stock</span>
                                 <span className={`pd-meta-val ${isOutOfStock ? 'text-danger' : 'text-success'}`}>
-                                    {isOutOfStock ? '✕ Out of Stock' : `✓ ${product.stock} available`}
+                                    {isOutOfStock ? '✕ Out of Stock' : `✓ ${product.product_count} available`}
                                 </span>
                             </div>
                         </div>
 
-                        <div className="pd-price">₹{Number(product.price).toFixed(2)}</div>
+                        <div className="pd-price">
+                            ₹{Number(product?.price || 0).toFixed(2)}
+                        </div>
 
                         {!isOutOfStock && (
                             <div className="pd-qty-row">
@@ -95,10 +98,12 @@ export default function ProductDetail() {
                                     <span className="qty-val">{qty}</span>
                                     <button
                                         className="qty-btn"
-                                        onClick={() => setQty(q => Math.min(product.stock, q + 1))}
+                                        onClick={() => setQty(q => Math.min(product.prodcut_count, q + 1))}
                                     >+</button>
                                 </div>
-                                <span className="pd-subtotal">= ₹{(product.price * qty).toFixed(2)}</span>
+                                <span className="pd-subtotal">
+                                    = ₹{(Number(product?.price || 0) * Number(qty || 0)).toFixed(2)}
+                                </span>
                             </div>
                         )}
 

@@ -69,7 +69,7 @@ export default function Cart() {
                                         <div className="qty-control">
                                             <button className="qty-btn" onClick={() => handleUpdate(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>−</button>
                                             <span className="qty-val">{item.quantity}</span>
-                                            <button className="qty-btn" onClick={() => handleUpdate(item.id, item.quantity + 1)} disabled={item.quantity >= item.product.stock}>+</button>
+                                            <button className="qty-btn" onClick={() => handleUpdate(item.id, item.quantity + 1)} disabled={item.quantity >= item.product.product_count}>+</button>
                                         </div>
                                         <p className="cart-item-total">₹{Number(item.total_price).toFixed(2)}</p>
                                         <button className="btn btn-danger btn-sm" onClick={() => handleRemove(item.id, item.product.product_name)}>✕</button>

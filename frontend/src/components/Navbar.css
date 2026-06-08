@@ -182,7 +182,7 @@
 
 .drop-menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 1px);
     right: 0;
     background: #fff;
     border: 1px solid var(--border);

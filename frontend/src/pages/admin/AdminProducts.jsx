@@ -45,7 +45,7 @@ export default function AdminProducts() {
             product_name: p.product_name, category: p.category,
             price: p.price, quantity_value: p.quantity_value,
             quantity_unit: p.quantity_unit, product_count: p.product_count,
-            stock: p.stock, image: null, is_active: p.is_active
+            stock: p.product_count, image: null, is_active: p.is_active
         })
         setImgPreview(p.image_url || null)
         setEditId(p.id); setErrors({}); setModal('edit')
@@ -70,7 +70,7 @@ export default function AdminProducts() {
         if (!form.product_name.trim()) errs.product_name = 'Required'
         if (!form.price || isNaN(form.price) || +form.price <= 0) errs.price = 'Valid price required'
         if (!form.quantity_value || isNaN(form.quantity_value)) errs.quantity_value = 'Required'
-        if (!form.stock && form.stock !== 0) errs.stock = 'Required'
+        if (!form.product_count && form.product_count !== 0) errs.product_count = 'Required'
         return errs
     }
 
@@ -183,8 +183,8 @@ export default function AdminProducts() {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Stock *</label>
-                                    <input className={`form-input ${errors.stock ? 'error' : ''}`} name="stock" type="number" value={form.stock} onChange={handleChange} placeholder="100" />
-                                    {errors.stock && <span className="form-error">{errors.stock}</span>}
+                                    <input className={`form-input ${errors.product_count ? 'error' : ''}`} name="stock" type="number" value={form.product_count} onChange={handleChange} placeholder="100" />
+                                    {errors.product_count && <span className="form-error">{errors.product_count}</span>}
                                 </div>
                             </div>
 
@@ -255,8 +255,8 @@ export default function AdminProducts() {
                                         <td>₹{Number(p.price).toFixed(2)}</td>
                                         <td>{p.quantity_value} {p.quantity_unit}</td>
                                         <td>
-                                            <span className={`badge ${p.stock === 0 ? 'badge-danger' : p.stock < 10 ? 'badge-warning' : 'badge-success'}`}>
-                                                {p.stock === 0 ? 'Out of Stock' : `${p.stock}`}
+                                            <span className={`badge ${p.product_count === 0 ? 'badge-danger' : p.product_count < 10 ? 'badge-warning' : 'badge-success'}`}>
+                                                {p.product_count === 0 ? 'Out of Stock' : `${p.product_count}`}
                                             </span>
                                         </td>
                                         <td>

@@ -39,7 +39,7 @@ export default function AdminInventory() {
         if (!qty || qty < 1) { showToast('Enter a valid quantity', 'error'); return }
         setSaving(true)
         try {
-            await productAPI.updateStock(selectedProduct.id, { added_stock: qty, note })
+            await productAPI.updateStock(selectedProduct.id, { quantity: qty, note })
             showToast(`+${qty} stock added to ${selectedProduct.product_name}`, 'success')
             setModal(false)
             loadProducts()
@@ -59,8 +59,8 @@ export default function AdminInventory() {
         finally { setHistoryLoading(false) }
     }
 
-    const lowStock = products.filter(p => p.stock > 0 && p.stock < 10)
-    const outOfStock = products.filter(p => p.stock === 0)
+    const lowStock = products.filter(p => p.product_count > 0 && p.product_count < 10)
+    const outOfStock = products.filter(p => p.product_count === 0)
 
     return (
         <div className="page-wrapper">
@@ -77,7 +77,7 @@ export default function AdminInventory() {
                         <div className="modal-form">
                             <div className="stock-product-info">
                                 <p className="stock-product-name">{selectedProduct.product_name}</p>
-                                <p className="stock-current">Current Stock: <strong>{selectedProduct.stock}</strong> units</p>
+                                <p className="stock-current">Current Stock: <strong>{selectedProduct.product_count}</strong> units</p>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Quantity to Add *</label>
@@ -92,7 +92,7 @@ export default function AdminInventory() {
                                 />
                                 {addStock && parseInt(addStock) > 0 && (
                                     <p className="stock-new-preview">
-                                        New Stock: <strong>{selectedProduct.stock + parseInt(addStock)}</strong> units
+                                        New Stock: <strong>{selectedProduct.product_count + parseInt(addStock)}</strong> units
                                     </p>
                                 )}
                             </div>
@@ -184,7 +184,7 @@ export default function AdminInventory() {
                             </thead>
                             <tbody>
                                 {products.map(p => (
-                                    <tr key={p.id} className={p.stock === 0 ? 'row-danger' : p.stock < 10 ? 'row-warning' : ''}>
+                                    <tr key={p.id} className={p.product_count === 0 ? 'row-danger' : p.product_count < 10 ? 'row-warning' : ''}>
                                         <td><strong>{p.product_name}</strong></td>
                                         <td>
                                             <span className={`badge ${p.category === 'oil' ? 'badge-warning' : 'badge-primary'}`}>
@@ -193,14 +193,14 @@ export default function AdminInventory() {
                                         </td>
                                         <td>₹{Number(p.price).toFixed(2)}</td>
                                         <td>
-                                            <span className="stock-number">{p.stock}</span>
+                                            <span className="stock-number">{p.product_count}</span>
                                         </td>
                                         <td>
-                                            <span className={`badge ${p.stock === 0 ? 'badge-danger' :
-                                                p.stock < 10 ? 'badge-warning' : 'badge-success'
+                                            <span className={`badge ${p.product_count === 0 ? 'badge-danger' :
+                                                p.product_count < 10 ? 'badge-warning' : 'badge-success'
                                                 }`}>
-                                                {p.stock === 0 ? '❌ Out of Stock' :
-                                                    p.stock < 10 ? '⚠️ Low Stock' : '✓ In Stock'}
+                                                {p.product_count === 0 ? '❌ Out of Stock' :
+                                                    p.product_count < 10 ? '⚠️ Low Stock' : '✓ In Stock'}
                                             </span>
                                         </td>
                                         <td>

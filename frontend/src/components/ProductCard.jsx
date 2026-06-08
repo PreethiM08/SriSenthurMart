@@ -10,7 +10,7 @@ export default function ProductCard({ product, onToast }) {
     const navigate = useNavigate()
     const [adding, setAdding] = useState(false)
 
-    const isOutOfStock = product.stock === 0
+    const isOutOfStock = product.product_count === 0
 
     const handleAddToCart = async (e) => {
         e.stopPropagation()
@@ -54,7 +54,7 @@ export default function ProductCard({ product, onToast }) {
                     <div className="product-price-block">
                         <span className="product-price">₹{Number(product.price).toFixed(2)}</span>
                         <span className={`stock-badge ${isOutOfStock ? 'out' : 'in'}`}>
-                            {isOutOfStock ? 'Out of Stock' : `${product.stock} left`}
+                            {isOutOfStock ? 'Out of Stock' : `${product.product_count} left`}
                         </span>
                     </div>
 

@@ -5,6 +5,7 @@ from .models import Product, StockHistory
 class ProductSerializer(serializers.ModelSerializer):
     is_in_stock = serializers.ReadOnlyField()
     image_url = serializers.SerializerMethodField()
+    is_in_stock = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -15,6 +16,9 @@ class ProductSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+    def get_is_in_stock(self, obj):
+        return obj.product_count > 0
 
     def get_image_url(self, obj):
         request = self.context.get('request')

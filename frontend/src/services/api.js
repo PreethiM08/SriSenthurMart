@@ -62,7 +62,7 @@ export const productAPI = {
     create: (data) => api.post('/products/admin/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`/products/admin/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`/products/admin/${id}/`),
-    updateStock: (id, data) => api.post(`/products/admin/${id}/stock/`, data),
+    updateStock: (id, data) => api.post(`/products/admin/${id}/add-stock/`, data),
     getStockHistory: (id) => api.get(`/products/admin/${id}/stock-history/`),
 }
 
@@ -70,7 +70,7 @@ export const productAPI = {
 export const cartAPI = {
     get: () => api.get('/cart/'),
     add: (data) => api.post('/cart/', data),
-    update: (id, data) => api.put(`/cart/${id}/`, data),
+    update: (id, data) => api.patch(`/cart/${id}/`, data),
     remove: (id) => api.delete(`/cart/${id}/`),
     clear: () => api.delete('/cart/'),
 }
@@ -81,7 +81,7 @@ export const orderAPI = {
     getAll: () => api.get('/orders/'),
     getOne: (id) => api.get(`/orders/${id}/`),
     adminGetAll: (params) => api.get('/orders/admin/', { params }),
-    adminUpdateStatus: (id, data) => api.put(`/orders/admin/${id}/`, data),
+    adminUpdateStatus: (id, data) => api.patch(`/orders/admin/${id}/`, data),
 }
 
 // ─── Transactions ────────────────────────────────────────────────────────────

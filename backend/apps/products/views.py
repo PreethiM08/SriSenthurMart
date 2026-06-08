@@ -32,6 +32,7 @@ class ProductDetailView(generics.RetrieveAPIView):
 class AdminProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     permission_classes = [IsAdminUser]
+    pagination_class = None
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'is_active']
     search_fields = ['product_name']
