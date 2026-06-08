@@ -27,7 +27,7 @@ export default function Navbar() {
                 <div className="container navbar-inner">
                     <Link to="/admin/dashboard" className="navbar-brand">
                         <span className="brand-icon">🌿</span>
-                        <span>SriSenthurMart <em>Admin</em></span>
+                        <span>NatureMart <em>Admin</em></span>
                     </Link>
                     <div className="admin-nav-links">
                         <Link to="/admin/dashboard" className={isActive('/admin/dashboard') ? 'active' : ''}>Dashboard</Link>
@@ -47,7 +47,7 @@ export default function Navbar() {
             <div className="container navbar-inner">
                 <Link to="/" className="navbar-brand">
                     <span className="brand-icon">🌿</span>
-                    <span>SriSenthurMart</span>
+                    <span>NatureMart</span>
                 </Link>
 
                 <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
@@ -58,7 +58,7 @@ export default function Navbar() {
                 <div className="navbar-right">
                     <Link to="/cart" className="cart-btn">
                         <span>🛒</span>
-                        {(cartSummary?.products_count > 0) && (
+                        {cartSummary.products_count > 0 && (
                             <span className="cart-count">{cartSummary.products_count}</span>
                         )}
                     </Link>

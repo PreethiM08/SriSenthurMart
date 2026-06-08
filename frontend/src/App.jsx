@@ -16,7 +16,6 @@ import OrderSuccess from './pages/OrderSuccess.jsx'
 import MyOrders from './pages/MyOrders.jsx'
 
 // Admin pages
-import AdminLogin from './pages/admin/AdminLogin.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminProducts from './pages/admin/AdminProducts.jsx'
 import AdminInventory from './pages/admin/AdminInventory.jsx'
@@ -33,7 +32,9 @@ export default function App() {
             {/* Public */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* /admin/login → redirect to unified /login page */}
+            <Route path="/admin/login" element={<Navigate to="/login" replace />} />
 
             {/* User protected */}
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
