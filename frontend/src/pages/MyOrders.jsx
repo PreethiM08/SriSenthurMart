@@ -84,7 +84,7 @@ export default function MyOrders() {
                                                                 <td>{item.product_name}</td>
                                                                 <td>{item.quantity}</td>
                                                                 <td>₹{Number(item.unit_price).toFixed(2)}</td>
-                                                                <td>₹{Number(item.total_price).toFixed(2)}</td>
+                                                                <td>₹{Number(item.subtotal).toFixed(2)}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>

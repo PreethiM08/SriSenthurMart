@@ -30,12 +30,12 @@ class DashboardView(APIView):
         )['total'] or 0
 
         low_stock_products = Product.objects.filter(
-            is_active=True, stock__gt=0, stock__lte=10
-        ).values('id', 'product_name', 'stock')[:10]
+            is_active=True, product_count__gt=0, product_count__lte=10
+        ).values('id', 'product_name', 'product_count')[:10]
 
         out_of_stock_products = Product.objects.filter(
-            is_active=True, stock=0
-        ).values('id', 'product_name', 'stock')[:10]
+            is_active=True, product_count=0
+        ).values('id', 'product_name', 'product_count')[:10]
 
         low_stock_all = list(low_stock_products) + list(out_of_stock_products)
 
@@ -76,8 +76,8 @@ class DashboardView(APIView):
             'total_transactions': total_transactions,
             'total_revenue': float(total_revenue),
             'products_sold': products_sold,
-            'low_stock_count': Product.objects.filter(is_active=True, stock__gt=0, stock__lte=10).count(),
-            'out_of_stock_count': Product.objects.filter(is_active=True, stock=0).count(),
+            'low_stock_count': Product.objects.filter(is_active=True, product_count__gt=0, product_count__lte=10).count(),
+            'out_of_stock_count': Product.objects.filter(is_active=True, product_count=0).count(),
             'low_stock_products': low_stock_all,
             'top_products': list(top_products),
             'monthly_sales': monthly_data,

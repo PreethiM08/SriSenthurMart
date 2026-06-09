@@ -46,7 +46,8 @@ export function CartProvider({ children }) {
         await cartAPI.clear()
         setCartItems([])
         setCartSummary({ products_count: 0, grand_total: 0 })
-    }, [])
+        await fetchCart()
+    }, [fetchCart])
 
     return (
         <CartContext.Provider value={{

@@ -82,6 +82,7 @@ export const orderAPI = {
     getOne: (id) => api.get(`/orders/${id}/`),
     adminGetAll: (params) => api.get('/orders/admin/', { params }),
     adminUpdateStatus: (id, data) => api.patch(`/orders/admin/${id}/`, data),
+    cancel: (id) => api.post(`/orders/${id}/cancel/`),
 }
 
 // ─── Transactions ────────────────────────────────────────────────────────────

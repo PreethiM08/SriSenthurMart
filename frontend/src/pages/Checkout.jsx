@@ -40,19 +40,27 @@ export default function Checkout() {
         setPlacing(true)
         try {
             const payload = fromCart
-                ? { from_cart: true }
-                : { product_id: parseInt(productId), quantity: qty, from_cart: false }
+                ? {}
+                : { items: [{ product_id: parseInt(productId), quantity: qty }] }
             const { data } = await orderAPI.create(payload)
+            sessionStorage.setItem('checkoutParams', JSON.stringify(
+                fromCart
+                    ? { from_cart: 'true' }
+                    : { product: productId, qty: String(qty) }
+            ))
             navigate(`/payment/${data.id}`)
         } catch (err) {
             showToast(err.response?.data?.error || 'Failed to create order', 'error')
         } finally { setPlacing(false) }
     }
 
-    if (!fromCart && !productId) {
-        navigate('/')
-        return null
-    }
+    useEffect(() => {
+        if (!fromCart && !productId) {
+            navigate('/')
+        }
+    }, [fromCart, productId])
+
+    if (!fromCart && !productId) return null
 
     return (
         <div className="page-wrapper">

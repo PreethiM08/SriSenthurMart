@@ -7,6 +7,7 @@ from .models import Order, OrderItem
 from .serializers import OrderSerializer
 from apps.cart.models import Cart
 from apps.products.models import Product
+from apps.transactions.models import Transaction
 
 
 class CreateOrderView(APIView):
@@ -124,5 +125,36 @@ class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
         instance.status = new_status
         instance.save()
         return Response(OrderSerializer(instance).data)
+class CancelOrderView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    
+    @transaction.atomic
+    def post(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+        except Order.DoesNotExist:
+            return Response({'error': 'Order not found.'}, status=404)
+
+        # Block cancel if already paid
+        if hasattr(order, 'transaction') and order.transaction.payment_status == 'success':
+            return Response({'error': 'Cannot cancel a paid order.'}, status=400)
+
+        # Restore stock AND restore cart items
+        from apps.cart.models import Cart
+        for item in order.items.all():
+            if item.product:
+                # Restore stock
+                item.product.product_count += item.quantity
+                item.product.save()
+                # Re-add back to cart
+                cart_item, created = Cart.objects.get_or_create(
+                    user=request.user,
+                    product=item.product,
+                    defaults={'quantity': item.quantity}
+                )
+                if not created:
+                    cart_item.quantity += item.quantity
+                    cart_item.save()
+
+        order.delete()
+        return Response({'message': 'Order cancelled, stock and cart restored.'}, status=200)

@@ -76,7 +76,7 @@ export default function AdminDashboard() {
 
                     <div className="chart-card">
                         <h3 className="chart-title">🥧 Product Categories</h3>
-                        <ResponsiveContainer width="100%" height={220}>
+                        <ResponsiveContainer width="100%" height={250}>
                             <PieChart>
                                 <Pie data={categoryData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                                     {categoryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
@@ -111,26 +111,32 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="chart-card">
-                        <h3 className="chart-title">⚠️ Low Stock Products</h3>
+                        <h3 className="chart-title">⚠️ Low Stock & Out of Stock</h3>
                         {stats?.low_stock_products?.length > 0 ? (
                             <div className="table-wrapper">
                                 <table>
-                                    <thead><tr><th>Product</th><th>Stock</th></tr></thead>
+                                    <thead>
+                                        <tr><th>Product</th><th>Stock</th><th>Status</th></tr>
+                                    </thead>
                                     <tbody>
-                                        {stats.low_stock_products.map((p, i) => (
-                                            <tr key={i}>
-                                                <td>{p.product_name}</td>
-                                                <td>
-                                                    <span className={`badge ${p.product_count === 0 ? 'badge-danger' : 'badge-warning'}`}>
-                                                        {p.product_count === 0 ? 'Out of Stock' : `${p.product_count} left`}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {stats.low_stock_products.map((p, i) => {
+                                            const qty = p.product_count ?? p.stock ?? 0
+                                            return (
+                                                <tr key={i}>
+                                                    <td>{p.product_name}</td>
+                                                    <td><strong>{qty}</strong></td>
+                                                    <td>
+                                                        <span className={`badge ${qty === 0 ? 'badge-danger' : 'badge-warning'}`}>
+                                                            {qty === 0 ? '❌ Out of Stock' : '⚠️ Low Stock'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
-                        ) : <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>All products well stocked</p>}
+                        ) : <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>✅ All products well stocked</p>}
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { orderAPI, transactionAPI } from '../services/api.js'
+import { orderAPI, transactionAPI, cartAPI } from '../services/api.js'
+import { useCart } from '../context/CartContext.jsx'
 import './Payment.css'
 
 function generateTxnId() {
@@ -11,6 +12,15 @@ export default function Payment() {
     const { orderId } = useParams()
     const navigate = useNavigate()
     const [order, setOrder] = useState(null)
+    const { fetchCart } = useCart()
+    const handleCancel = async () => {
+        try {
+            await orderAPI.cancel(orderId)
+            await fetchCart()   // ← refresh cart in frontend after restore
+        } catch { /* ignore */ }
+        const params = JSON.parse(sessionStorage.getItem('checkoutParams') || '{}')
+        navigate('/checkout?' + new URLSearchParams(params).toString())
+    }
     const [loading, setLoading] = useState(true)
     const [paying, setPaying] = useState(false)
     const [step, setStep] = useState('form') // form | processing | success
@@ -65,6 +75,7 @@ export default function Payment() {
                 payment_status: 'success'
             })
             setStep('success')
+            try { await fetchCart() } catch { /* ignore */ }
             setTimeout(() => navigate(`/order-success/${orderId}?txn=${txnId}`), 1500)
         } catch {
             setStep('form')
@@ -175,6 +186,14 @@ export default function Payment() {
                                         disabled={paying}
                                     >
                                         {paying ? 'Processing...' : `💳 Pay ₹${Number(order?.total_amount).toFixed(2)}`}
+                                    </button>
+                                    <button
+                                        className="btn btn-ghost btn-lg w-full"
+                                        style={{ marginTop: 10 }}
+                                        onClick={handleCancel}
+                                        disabled={paying}
+                                    >
+                                        ✕ Cancel Payment
                                     </button>
 
                                     <p className="payment-note">This is a mock payment — no real transaction occurs.</p>
