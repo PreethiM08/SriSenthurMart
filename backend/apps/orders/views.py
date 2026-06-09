@@ -8,6 +8,7 @@ from .serializers import OrderSerializer
 from apps.cart.models import Cart
 from apps.products.models import Product
 from apps.transactions.models import Transaction
+from apps.cart.models import Cart
 
 
 class CreateOrderView(APIView):
@@ -60,9 +61,7 @@ class CreateOrderView(APIView):
                 product_name=product.product_name,
                 quantity=qty,
                 unit_price=product.price
-            )
-            product.product_count -= qty
-            product.save()
+                )
 
         # Clear cart if order was from cart
         if not items_data:
@@ -100,21 +99,38 @@ class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAdminUser]
-
+    
+    @transaction.atomic
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
         new_status = request.data.get("status")
         
         if new_status not in dict(Order.STATUS_CHOICES):
-            return Response(
-                {"error": "Invalid status"},
-                status=400
-                )
+            return Response({"error": "Invalid status"}, status=400)
+            
+        old_status = instance.status
+# Decrease stock only when marking as Delivered
+        if new_status == 'delivered' and old_status != 'delivered':
+            for item in instance.items.all():
+                if item.product:
+                    if item.product.product_count < item.quantity:
+                        return Response(
+                            {'error': f'Insufficient stock for {item.product.product_name}'},
+                            status=400
+                            )
+                    item.product.product_count -= item.quantity
+                    item.product.save()
+
+        # If reverting from Delivered → restore stock back
+        if old_status == 'delivered' and new_status != 'delivered':
+            for item in instance.items.all():
+                if item.product:
+                    item.product.product_count += item.quantity
+                    item.product.save()
+
         instance.status = new_status
         instance.save()
-        return Response(
-            OrderSerializer(instance).data
-            )
+        return Response(OrderSerializer(instance).data)
 
     def partial_update(self, request, *args, **kwargs):
         # Only allow status updates from admin
@@ -125,6 +141,7 @@ class AdminOrderDetailView(generics.RetrieveUpdateAPIView):
         instance.status = new_status
         instance.save()
         return Response(OrderSerializer(instance).data)
+
 class CancelOrderView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -140,21 +157,18 @@ class CancelOrderView(APIView):
             return Response({'error': 'Cannot cancel a paid order.'}, status=400)
 
         # Restore stock AND restore cart items
-        from apps.cart.models import Cart
+       
+        
+        
         for item in order.items.all():
             if item.product:
-                # Restore stock
-                item.product.product_count += item.quantity
-                item.product.save()
-                # Re-add back to cart
                 cart_item, created = Cart.objects.get_or_create(
                     user=request.user,
                     product=item.product,
                     defaults={'quantity': item.quantity}
-                )
+                    )
                 if not created:
                     cart_item.quantity += item.quantity
                     cart_item.save()
-
         order.delete()
         return Response({'message': 'Order cancelled, stock and cart restored.'}, status=200)
