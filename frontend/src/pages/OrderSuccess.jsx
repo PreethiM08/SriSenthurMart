@@ -69,7 +69,7 @@ export default function OrderSuccess() {
                                 <div key={item.id} className="receipt-item">
                                     <span>{item.product_name}</span>
                                     <span>×{item.quantity}</span>
-                                    <span>₹{Number(item.total_price).toFixed(2)}</span>
+                                    <span>₹{Number(item.subtotal).toFixed(2)}</span>
                                 </div>
                             ))}
                         </div>

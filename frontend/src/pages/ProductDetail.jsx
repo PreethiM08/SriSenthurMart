@@ -98,7 +98,7 @@ export default function ProductDetail() {
                                     <span className="qty-val">{qty}</span>
                                     <button
                                         className="qty-btn"
-                                        onClick={() => setQty(q => Math.min(product.prodcut_count, q + 1))}
+                                        onClick={() => setQty(q => Math.min(product.product_count, q + 1))}
                                     >+</button>
                                 </div>
                                 <span className="pd-subtotal">

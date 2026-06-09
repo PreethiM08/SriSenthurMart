@@ -192,7 +192,7 @@ export default function Payment() {
                                             <p className="checkout-item-name">{item.product_name}</p>
                                             <p className="checkout-item-meta">Qty: {item.quantity}</p>
                                         </div>
-                                        <span className="checkout-item-price">₹{Number(item.total_price).toFixed(2)}</span>
+                                        <span className="checkout-item-price">₹{Number(item.subtotal).toFixed(2)}</span>
                                     </div>
                                 ))}
                             </div>
